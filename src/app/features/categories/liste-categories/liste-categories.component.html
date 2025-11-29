@@ -1,0 +1,72 @@
+<div class="categories-container">
+  <div class="categories-header">
+    <div class="header-left">
+      <h1>Gestion des Catégories</h1>
+      <p class="subtitle">{{ categories.length }} catégorie(s)</p>
+    </div>
+    <div class="header-right">
+      <button mat-raised-button color="primary" (click)="ouvrirDialogCreation()">
+        <mat-icon>add</mat-icon>
+        Nouvelle catégorie
+      </button>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loading-container" *ngIf="loading && categories.length === 0">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des catégories...</p>
+  </div>
+
+  <!-- Grille des catégories -->
+  <div class="categories-grid" *ngIf="categories.length > 0">
+    <mat-card class="categorie-card" *ngFor="let categorie of categories">
+      <mat-card-header>
+        <div class="categorie-icon">
+          <mat-icon *ngIf="!categorie.icone">category</mat-icon>
+          <mat-icon *ngIf="categorie.icone">{{ categorie.icone }}</mat-icon>
+        </div>
+        <mat-card-title>{{ categorie.nom }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="description">{{ categorie.description || 'Aucune description' }}</p>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <mat-icon>inventory_2</mat-icon>
+            <span>{{ categorie.nombreProduits }} produit(s)</span>
+          </div>
+          
+          <mat-chip [class.active]="categorie.active" [class.inactive]="!categorie.active">
+            {{ categorie.active ? 'Active' : 'Inactive' }}
+          </mat-chip>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="modifier(categorie)">
+          <mat-icon>edit</mat-icon>
+          Modifier
+        </button>
+        
+        <button 
+          mat-button 
+          *ngIf="categorie.active"
+          (click)="desactiver(categorie)">
+          <mat-icon>block</mat-icon>
+          Désactiver
+        </button>
+        
+        <button 
+          mat-button 
+          color="primary"
+          *ngIf="!categorie.active"
+          (click)="activer(categorie)">
+          <mat-icon>check_circle</mat-icon>
+          Activer
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

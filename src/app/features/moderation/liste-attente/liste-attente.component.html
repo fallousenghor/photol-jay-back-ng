@@ -1,0 +1,106 @@
+<div class="moderation-container">
+  <div class="moderation-header">
+    <div class="header-left">
+      <h1>Modération des Produits</h1>
+      <p class="subtitle">{{ totalElements }} produit(s) en attente de validation</p>
+    </div>
+    <div class="header-right">
+      <button mat-raised-button color="primary" (click)="loadProduits()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loading-container" *ngIf="loading && produits.length === 0">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des produits...</p>
+  </div>
+
+  <!-- Liste vide -->
+  <mat-card class="empty-state" *ngIf="!loading && produits.length === 0">
+    <mat-icon>check_circle</mat-icon>
+    <h2>Aucun produit en attente</h2>
+    <p>Tous les produits ont été modérés !</p>
+  </mat-card>
+
+  <!-- Liste des produits -->
+  <div class="produits-grid" *ngIf="produits.length > 0">
+    <mat-card class="produit-card" *ngFor="let produit of produits">
+      <!-- Image -->
+      <div class="produit-image">
+        <img 
+          [src]="'http://localhost:8080/' + produit.photoUrl" 
+          [alt]="produit.nom"
+          (error)="onImageError($event)">
+        
+        <!-- Badge statut métadonnées -->
+        <div class="metadata-badge" [class.valid]="produit.metadataPhoto?.priseParAppareil">
+          <mat-icon>{{ produit.metadataPhoto?.priseParAppareil ? 'verified' : 'warning' }}</mat-icon>
+        </div>
+      </div>
+
+      <!-- Contenu -->
+      <mat-card-content>
+        <h3 class="produit-nom">{{ produit.nom }}</h3>
+        <p class="produit-prix">{{ produit.prix | number:'1.0-0' }} FCFA</p>
+        
+        <mat-divider></mat-divider>
+        
+        <!-- Informations vendeur -->
+        <div class="vendeur-info">
+          <mat-icon>person</mat-icon>
+          <div>
+            <p class="vendeur-nom">{{ produit.vendeurNom }}</p>
+            <p class="vendeur-details">{{ produit.vendeurVille || 'Ville non renseignée' }}</p>
+          </div>
+        </div>
+
+        <!-- Informations photo -->
+        <div class="photo-info" *ngIf="produit.metadataPhoto">
+          <mat-icon>camera_alt</mat-icon>
+          <div>
+            <p><strong>Appareil :</strong> {{ produit.metadataPhoto.modeleAppareil || 'Non détecté' }}</p>
+            <p><strong>Date :</strong> {{ produit.metadataPhoto.datePrisePhoto ? (produit.metadataPhoto.datePrisePhoto | date:'short') : 'Non disponible' }}</p>
+          </div>
+        </div>
+
+        <!-- Date de création -->
+        <div class="date-info">
+          <mat-icon>schedule</mat-icon>
+          <span>{{ produit.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </mat-card-content>
+
+      <!-- Actions -->
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="voirDetail(produit.id)">
+          <mat-icon>visibility</mat-icon>
+          Détails
+        </button>
+        
+        <button mat-button class="btn-success" (click)="approuver(produit)">
+          <mat-icon>check</mat-icon>
+          Approuver
+        </button>
+        
+        <button mat-button color="warn" (click)="rejeter(produit)">
+          <mat-icon>close</mat-icon>
+          Rejeter
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Pagination -->
+  <mat-paginator 
+    *ngIf="totalElements > 0"
+    [length]="totalElements"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

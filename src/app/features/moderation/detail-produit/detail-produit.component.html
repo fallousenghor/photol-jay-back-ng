@@ -1,0 +1,273 @@
+<div class="detail-container" *ngIf="!loading && produit">
+  <!-- Header -->
+  <div class="detail-header">
+    <button mat-icon-button (click)="retour()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-info">
+      <h1>{{ produit.nom }}</h1>
+      <mat-chip [class]="'status-' + produit.statut.toLowerCase()">
+        {{ getStatutLabel(produit.statut) }}
+      </mat-chip>
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <!-- Colonne gauche : Image et métadonnées -->
+    <div class="left-column">
+      <!-- Image principale -->
+      <mat-card class="image-card">
+        <img 
+          [src]="'http://localhost:8080/' + produit.photoUrl" 
+          [alt]="produit.nom"
+          (error)="onImageError($event)">
+      </mat-card>
+
+      <!-- Métadonnées EXIF -->
+      <mat-card class="metadata-card" *ngIf="produit.metadataPhoto">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>photo_camera</mat-icon>
+            Métadonnées de la Photo
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="metadata-grid">
+            <!-- Statut de validation -->
+            <div class="metadata-item full-width">
+              <div class="validation-status" [class.valid]="produit.metadataPhoto.priseParAppareil">
+                <mat-icon>{{ produit.metadataPhoto.priseParAppareil ? 'verified' : 'warning' }}</mat-icon>
+                <span>
+                  {{ produit.metadataPhoto.priseParAppareil ? 'Photo authentique' : 'Photo suspecte' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Appareil -->
+            <div class="metadata-item">
+              <mat-icon>smartphone</mat-icon>
+              <div>
+                <p class="label">Appareil</p>
+                <p class="value">{{ produit.metadataPhoto.modeleAppareil || 'Non détecté' }}</p>
+              </div>
+            </div>
+
+            <!-- Fabricant -->
+            <div class="metadata-item">
+              <mat-icon>business</mat-icon>
+              <div>
+                <p class="label">Fabricant</p>
+                <p class="value">{{ produit.metadataPhoto.fabricantAppareil || 'Non détecté' }}</p>
+              </div>
+            </div>
+
+            <!-- Date de prise -->
+            <div class="metadata-item">
+              <mat-icon>event</mat-icon>
+              <div>
+                <p class="label">Date de prise</p>
+                <p class="value">{{ produit.metadataPhoto.datePrisePhoto ? (produit.metadataPhoto.datePrisePhoto | date:'dd/MM/yyyy HH:mm') : 'Non disponible' }}</p>
+              </div>
+            </div>
+
+            <!-- Dimensions -->
+            <div class="metadata-item">
+              <mat-icon>aspect_ratio</mat-icon>
+              <div>
+                <p class="label">Dimensions</p>
+                <p class="value">
+                  {{ produit.metadataPhoto.largeur || 'N/A' }} x {{ produit.metadataPhoto.hauteur || 'N/A' }} px
+                </p>
+              </div>
+            </div>
+
+            <!-- Localisation -->
+            <div class="metadata-item full-width" *ngIf="produit.metadataPhoto.latitude && produit.metadataPhoto.longitude">
+              <mat-icon>location_on</mat-icon>
+              <div>
+                <p class="label">Localisation GPS</p>
+                <p class="value">
+                  Lat: {{ produit.metadataPhoto.latitude | number:'1.6-6' }}, 
+                  Lon: {{ produit.metadataPhoto.longitude | number:'1.6-6' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Logiciel -->
+            <div class="metadata-item full-width" *ngIf="produit.metadataPhoto.logicielUtilise">
+              <mat-icon>computer</mat-icon>
+              <div>
+                <p class="label">Logiciel détecté</p>
+                <p class="value warning">{{ produit.metadataPhoto.logicielUtilise }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Colonne droite : Informations et actions -->
+    <div class="right-column">
+      <!-- Informations produit -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Informations du Produit</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <mat-icon>label</mat-icon>
+            <div>
+              <p class="label">Nom</p>
+              <p class="value">{{ produit.nom }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>attach_money</mat-icon>
+            <div>
+              <p class="label">Prix</p>
+              <p class="value price">{{ produit.prix | number:'1.0-0' }} FCFA</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>category</mat-icon>
+            <div>
+              <p class="label">Catégorie</p>
+              <p class="value">{{ produit.categorieNom }}</p>
+            </div>
+          </div>
+
+          <div class="info-item full-width">
+            <mat-icon>description</mat-icon>
+            <div>
+              <p class="label">Description</p>
+              <p class="value description">{{ produit.description }}</p>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <p class="label">Date de création</p>
+              <p class="value">{{ produit.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon>visibility</mat-icon>
+            <div>
+              <p class="label">Nombre de vues</p>
+              <p class="value">{{ produit.nombreVues }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Informations vendeur -->
+      <mat-card class="vendeur-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Informations du Vendeur
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="vendeur-info">
+            <div class="info-row">
+              <mat-icon>account_circle</mat-icon>
+              <div>
+                <p class="label">Nom</p>
+                <p class="value">{{ produit.vendeurNom }}</p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <mat-icon>phone</mat-icon>
+              <div>
+                <p class="label">Téléphone</p>
+                <p class="value">{{ produit.vendeurTelephone }}</p>
+              </div>
+            </div>
+
+            <div class="info-row" *ngIf="produit.vendeurVille">
+              <mat-icon>location_city</mat-icon>
+              <div>
+                <p class="label">Ville</p>
+                <p class="value">{{ produit.vendeurVille }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Motif de rejet (si rejeté) -->
+      <mat-card class="rejet-card" *ngIf="produit.statut === 'REJETE' && produit.motifRejet">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon color="warn">cancel</mat-icon>
+            Motif du Rejet
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ produit.motifRejet }}</p>
+          <p class="date">{{ produit.dateModerationDecision | date:'dd/MM/yyyy HH:mm' }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Actions de modération -->
+      <mat-card class="actions-card" *ngIf="produit.statut === 'EN_ATTENTE'">
+        <mat-card-header>
+          <mat-card-title>Actions de Modération</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="actions-buttons">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="approuver()"
+              [disabled]="actionEnCours">
+              <mat-icon>check_circle</mat-icon>
+              Approuver
+            </button>
+
+            <button 
+              mat-raised-button 
+              color="warn" 
+              (click)="ouvrirDialogRejet()"
+              [disabled]="actionEnCours">
+              <mat-icon>cancel</mat-icon>
+              Rejeter
+            </button>
+
+            <button 
+              mat-raised-button 
+              (click)="suspendre()"
+              [disabled]="actionEnCours">
+              <mat-icon>block</mat-icon>
+              Suspendre
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- Loader -->
+<div class="loading-container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+  <p>Chargement du produit...</p>
+</div>
+
+<!-- Erreur -->
+<mat-card class="error-card" *ngIf="error && !loading">
+  <mat-icon color="warn">error</mat-icon>
+  <h2>Erreur</h2>
+  <p>{{ error }}</p>
+  <button mat-raised-button color="primary" (click)="retour()">
+    Retour à la liste
+  </button>
+</mat-card>

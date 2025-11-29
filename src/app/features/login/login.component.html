@@ -1,0 +1,80 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>Marketplace - Backoffice</h1>
+      </mat-card-title>
+      <mat-card-subtitle>Connexion Modérateurs / Admins</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input 
+            matInput 
+            type="email" 
+            formControlName="email"
+            placeholder="moderateur@marketplace.com"
+            autocomplete="email">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+            L'email est obligatoire
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+            Format d'email invalide
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Mot de passe -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'" 
+            formControlName="motDePasse"
+            placeholder="••••••••"
+            autocomplete="current-password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Afficher le mot de passe'"
+            [attr.aria-pressed]="hidePassword">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('motDePasse')?.hasError('required')">
+            Le mot de passe est obligatoire
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Message d'erreur -->
+        <mat-error *ngIf="errorMessage" class="error-message">
+          <mat-icon>error</mat-icon>
+          {{ errorMessage }}
+        </mat-error>
+
+        <!-- Bouton de connexion -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          class="full-width login-button"
+          [disabled]="loginForm.invalid || loading">
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+          <span *ngIf="!loading">Se connecter</span>
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <p class="footer-text">
+        <mat-icon>info</mat-icon>
+        Accès réservé aux modérateurs et administrateurs
+      </p>
+    </mat-card-footer>
+  </mat-card>
+</div>

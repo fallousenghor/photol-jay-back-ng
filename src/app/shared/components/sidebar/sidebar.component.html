@@ -1,0 +1,65 @@
+<mat-drawer-container class="sidebar-container" autosize>
+  <mat-drawer #drawer mode="side" opened class="sidebar">
+    <nav class="sidebar-nav">
+      <a 
+        mat-list-item 
+        routerLink="/dashboard" 
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>dashboard</mat-icon>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a 
+        mat-list-item 
+        routerLink="/moderation" 
+        routerLinkActive="active"
+        class="nav-item"
+        *ngIf="isModerator">
+        <mat-icon [matBadge]="produitsEnAttente" matBadgeColor="warn" [matBadgeHidden]="produitsEnAttente === 0">
+          pending_actions
+        </mat-icon>
+        <span class="nav-label">Modération</span>
+      </a>
+
+      <a 
+        mat-list-item 
+        routerLink="/produits" 
+        routerLinkActive="active"
+        class="nav-item">
+        <mat-icon>inventory_2</mat-icon>
+        <span class="nav-label">Produits</span>
+      </a>
+
+      <a 
+        mat-list-item 
+        routerLink="/categories" 
+        routerLinkActive="active"
+        class="nav-item"
+        *ngIf="isAdmin">
+        <mat-icon>category</mat-icon>
+        <span class="nav-label">Catégories</span>
+      </a>
+
+      <a 
+        mat-list-item 
+        routerLink="/utilisateurs" 
+        routerLinkActive="active"
+        class="nav-item"
+        *ngIf="isAdmin">
+        <mat-icon>people</mat-icon>
+        <span class="nav-label">Utilisateurs</span>
+      </a>
+
+      <mat-divider></mat-divider>
+
+      <div class="sidebar-footer">
+        <p class="version">Version 1.0.0</p>
+      </div>
+    </nav>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <ng-content></ng-content>
+  </mat-drawer-content>
+</mat-drawer-container>

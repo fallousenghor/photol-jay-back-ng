@@ -1,0 +1,79 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="navbar-content">
+    <div class="navbar-left">
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h1 class="app-title">Marketplace Backoffice</h1>
+    </div>
+    
+    <div class="navbar-right">
+      <!-- Badge notifications -->
+      <button mat-icon-button [matMenuTriggerFor]="notificationsMenu">
+        <mat-icon [matBadge]="notificationCount" matBadgeColor="warn">
+          notifications
+        </mat-icon>
+      </button>
+      
+      <!-- Menu utilisateur -->
+      <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ currentUser?.nom }} {{ currentUser?.prenom }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Menu notifications -->
+<mat-menu #notificationsMenu="matMenu">
+  <div class="notifications-container">
+    <div class="notifications-header">
+      <h3>Notifications</h3>
+      <button mat-button color="primary">Tout marquer comme lu</button>
+    </div>
+    <mat-divider></mat-divider>
+    
+    <div class="notification-item" *ngFor="let notif of notifications">
+      <mat-icon [color]="notif.type === 'warning' ? 'warn' : 'primary'">
+        {{ notif.icon }}
+      </mat-icon>
+      <div class="notification-content">
+        <p class="notification-title">{{ notif.title }}</p>
+        <p class="notification-time">{{ notif.time }}</p>
+      </div>
+    </div>
+    
+    <div class="no-notifications" *ngIf="notifications.length === 0">
+      <mat-icon>notifications_none</mat-icon>
+      <p>Aucune notification</p>
+    </div>
+  </div>
+</mat-menu>
+
+<!-- Menu utilisateur -->
+<mat-menu #userMenu="matMenu">
+  <div class="user-info">
+    <p class="user-name-full">{{ currentUser?.nom }} {{ currentUser?.prenom }}</p>
+    <p class="user-email">{{ currentUser?.email }}</p>
+    <mat-chip class="role-chip">{{ currentUser?.role }}</mat-chip>
+  </div>
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item>
+    <mat-icon>person</mat-icon>
+    <span>Mon profil</span>
+  </button>
+  
+  <button mat-menu-item>
+    <mat-icon>settings</mat-icon>
+    <span>Paramètres</span>
+  </button>
+  
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="logout()">
+    <mat-icon color="warn">logout</mat-icon>
+    <span>Déconnexion</span>
+  </button>
+</mat-menu>

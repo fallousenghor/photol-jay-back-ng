@@ -39,4 +39,6 @@ testem.log
 
 # System files
 .DS_Store
+# Vercel
+.vercel
 Thumbs.db
